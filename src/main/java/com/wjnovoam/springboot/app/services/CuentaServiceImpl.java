@@ -1,5 +1,7 @@
 package com.wjnovoam.springboot.app.services;
 
+import com.wjnovoam.springboot.app.exceptions.BancoNoExisteException;
+import com.wjnovoam.springboot.app.exceptions.CuentaNoExisteException;
 import com.wjnovoam.springboot.app.models.Banco;
 import com.wjnovoam.springboot.app.models.Cuenta;
 import com.wjnovoam.springboot.app.repositories.BancoRepository;
@@ -21,34 +23,34 @@ public class CuentaServiceImpl implements CuentaService{
 
     @Override
     public Cuenta findById(Long id) {
-        return cuentaRepository.findById(id);
+        return cuentaRepository.findById(id).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));
     }
 
     @Override
     public int revisarTotalTransferencias(Long bancoId) {
-        Banco banco = bancoRepository.findById(bancoId);
+        Banco banco = bancoRepository.findById(bancoId).orElseThrow(()-> new BancoNoExisteException("El banco no xiste"));
         return banco.getTotalTransferencias();
     }
 
     @Override
-    public BigDecimal revisarSaldo(Long cuentaId) {
-        Cuenta cuenta = cuentaRepository.findById(cuentaId);
+    public BigDecimal revisarSaldo(Long cuentaId){
+        Cuenta cuenta = cuentaRepository.findById(cuentaId).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));
         return cuenta.getSaldo();
     }
 
     @Override
     public void transferir(Long numCuentaOrige, Long numCuentaDestino, BigDecimal monto, Long bancoId) {
-        Cuenta cuentaOrigen = cuentaRepository.findById(numCuentaOrige);
+        Cuenta cuentaOrigen = cuentaRepository.findById(numCuentaOrige).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));;
         cuentaOrigen.debito(monto);
-        cuentaRepository.update(cuentaOrigen);
+        cuentaRepository.save(cuentaOrigen);
 
-        Cuenta cuentaDestino = cuentaRepository.findById(numCuentaDestino);
+        Cuenta cuentaDestino = cuentaRepository.findById(numCuentaDestino).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));;
         cuentaDestino.credito(monto);
-        cuentaRepository.update(cuentaDestino);
+        cuentaRepository.save(cuentaDestino);
 
-        Banco banco = bancoRepository.findById(bancoId);
+        Banco banco = bancoRepository.findById(bancoId).orElseThrow(()-> new BancoNoExisteException("El banco no xiste"));
         int totalTransferencias = banco.getTotalTransferencias();
         banco.setTotalTransferencias(++totalTransferencias);
-        bancoRepository.update(banco);
+        bancoRepository.save(banco);
     }
 }

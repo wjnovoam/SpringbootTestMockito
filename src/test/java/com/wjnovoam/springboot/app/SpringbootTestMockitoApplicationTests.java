@@ -10,11 +10,8 @@ import com.wjnovoam.springboot.app.models.Cuenta;
 import com.wjnovoam.springboot.app.repositories.BancoRepository;
 import com.wjnovoam.springboot.app.repositories.CuentaRepository;
 import com.wjnovoam.springboot.app.services.CuentaService;
-import com.wjnovoam.springboot.app.services.CuentaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,7 +37,7 @@ class SpringbootTestMockitoApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void contextLoads() throws Exception {
         when(cuentaRepository.findById(1L)).thenReturn(Datos.crearCuenta001());
         when(cuentaRepository.findById(2L)).thenReturn(Datos.crearCuenta002());
         when(bancoRepository.findById(1L)).thenReturn(Datos.crearBanco());
@@ -64,10 +61,10 @@ class SpringbootTestMockitoApplicationTests {
 
         verify(cuentaRepository, times(3)).findById(1L);
         verify(cuentaRepository, times(3)).findById(2L);
-        verify(cuentaRepository, times(2)).update(any(Cuenta.class));
+        verify(cuentaRepository, times(2)).save(any(Cuenta.class));
 
         verify(bancoRepository, times(2)).findById(anyLong());
-        verify(bancoRepository).update(any(Banco.class));
+        verify(bancoRepository).save(any(Banco.class));
 
         verify(cuentaRepository, times(6)).findById(anyLong());
         verify(cuentaRepository, never()).findAll();
@@ -75,7 +72,7 @@ class SpringbootTestMockitoApplicationTests {
 
 
     @Test
-    void contextLoads2() {
+    void contextLoads2() throws Exception {
         when(cuentaRepository.findById(1L)).thenReturn(Datos.crearCuenta001());
         when(cuentaRepository.findById(2L)).thenReturn(Datos.crearCuenta002());
         when(bancoRepository.findById(1L)).thenReturn(Datos.crearBanco());
@@ -101,10 +98,10 @@ class SpringbootTestMockitoApplicationTests {
 
         verify(cuentaRepository, times(3)).findById(1L);
         verify(cuentaRepository, times(2)).findById(2L);
-        verify(cuentaRepository, never()).update(any(Cuenta.class));
+        verify(cuentaRepository, never()).save(any(Cuenta.class));
 
         verify(bancoRepository, times(1)).findById(1L);
-        verify(bancoRepository, never()).update(any(Banco.class));
+        verify(bancoRepository, never()).save(any(Banco.class));
 
         verify(cuentaRepository, times(5)).findById(anyLong());
         verify(cuentaRepository, never()).findAll();
@@ -116,7 +113,6 @@ class SpringbootTestMockitoApplicationTests {
 
         Cuenta cuenta1 = cuentaService.findById(1L);
         Cuenta cuenta2 = cuentaService.findById(1L);
-
 
         assertSame(cuenta1, cuenta2);
         //assertTrue(cuenta1 == cuenta2);

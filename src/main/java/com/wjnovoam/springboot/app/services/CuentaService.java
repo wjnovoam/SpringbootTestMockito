@@ -9,7 +9,7 @@ public interface CuentaService {
 
     int revisarTotalTransferencias(Long bancoId);
 
-    BigDecimal revisarSaldo(Long cuentaId);
+    BigDecimal revisarSaldo(Long cuentaId) throws Exception;
 
     void transferir(Long numCuentaOrige, Long numCuentaDestino, BigDecimal monto,Long bancoId);
 }
