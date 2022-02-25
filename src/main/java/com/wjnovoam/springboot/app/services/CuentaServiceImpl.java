@@ -7,6 +7,7 @@ import com.wjnovoam.springboot.app.models.Cuenta;
 import com.wjnovoam.springboot.app.repositories.BancoRepository;
 import com.wjnovoam.springboot.app.repositories.CuentaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -22,23 +23,27 @@ public class CuentaServiceImpl implements CuentaService{
     }
 
     @Override
+    @Transactional(readOnly = true) //Que solo haga consultas
     public Cuenta findById(Long id) {
         return cuentaRepository.findById(id).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int revisarTotalTransferencias(Long bancoId) {
         Banco banco = bancoRepository.findById(bancoId).orElseThrow(()-> new BancoNoExisteException("El banco no xiste"));
         return banco.getTotalTransferencias();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public BigDecimal revisarSaldo(Long cuentaId){
         Cuenta cuenta = cuentaRepository.findById(cuentaId).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));
         return cuenta.getSaldo();
     }
 
     @Override
+    @Transactional //Que puede hacer get, delete, post, update
     public void transferir(Long numCuentaOrige, Long numCuentaDestino, BigDecimal monto, Long bancoId) {
         Cuenta cuentaOrigen = cuentaRepository.findById(numCuentaOrige).orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));;
         cuentaOrigen.debito(monto);
