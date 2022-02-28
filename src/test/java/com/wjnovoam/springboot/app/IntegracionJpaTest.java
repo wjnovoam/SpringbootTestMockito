@@ -1,12 +1,18 @@
 package com.wjnovoam.springboot.app;
 
+import com.wjnovoam.springboot.app.datos.Datos;
+import com.wjnovoam.springboot.app.exceptions.BancoNoExisteException;
+import com.wjnovoam.springboot.app.exceptions.CuentaNoExisteException;
+import com.wjnovoam.springboot.app.models.Banco;
 import com.wjnovoam.springboot.app.models.Cuenta;
+import com.wjnovoam.springboot.app.repositories.BancoRepository;
 import com.wjnovoam.springboot.app.repositories.CuentaRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -18,6 +24,9 @@ public class IntegracionJpaTest {
 
     @Autowired
     CuentaRepository cuentaRepository;
+
+    @Autowired
+    BancoRepository bancoRepository;
 
     @Test
     void testFindById() {
@@ -48,6 +57,28 @@ public class IntegracionJpaTest {
         List<Cuenta> cuentas = cuentaRepository.findAll();
         assertFalse(cuentas.isEmpty());
         assertEquals(2, cuentas.size());
+    }
+
+    @Test
+    void testFindByCuentaIdThrowExceptions() {
+        Optional<Cuenta> cuenta = cuentaRepository.findById(20L);
+
+        assertThrows(CuentaNoExisteException.class, ()-> {
+            cuenta.orElseThrow(()-> new CuentaNoExisteException("La cuenta no existe"));
+        });
+        assertFalse(cuenta.isPresent());
+
+    }
+
+    @Test
+    void testFindByBancoIdThrowExceptions() {
+         Optional<Banco> banco = bancoRepository.findById(20L);
+
+        assertThrows(BancoNoExisteException.class, ()-> {
+            banco.orElseThrow(()-> new BancoNoExisteException("El banco no xiste"));
+        });
+        assertFalse(banco.isPresent());
+
     }
 
     @Test

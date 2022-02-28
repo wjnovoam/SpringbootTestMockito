@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class TransaccionDto {
     private Long cuentaOrigenId;
-    private Long cuentaDestinoID;
+    private Long cuentaDestinoId;
     private BigDecimal monto;
     private Long bancoId;
 
@@ -16,12 +16,12 @@ public class TransaccionDto {
         this.cuentaOrigenId = cuentaOrigenId;
     }
 
-    public Long getCuentaDestinoID() {
-        return cuentaDestinoID;
+    public Long getCuentaDestinoId() {
+        return cuentaDestinoId;
     }
 
-    public void setCuentaDestinoID(Long cuentaDestinoID) {
-        this.cuentaDestinoID = cuentaDestinoID;
+    public void setCuentaDestinoId(Long cuentaDestinoId) {
+        this.cuentaDestinoId = cuentaDestinoId;
     }
 
     public BigDecimal getMonto() {
