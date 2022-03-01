@@ -1,5 +1,6 @@
 package com.wjnovoam.springboot.app.controllers;
 
+import com.wjnovoam.springboot.app.exceptions.CuentaNoExisteException;
 import com.wjnovoam.springboot.app.models.Cuenta;
 import com.wjnovoam.springboot.app.models.dto.TransaccionDto;
 import com.wjnovoam.springboot.app.services.CuentaService;
@@ -11,6 +12,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -28,9 +30,16 @@ public class CuentaController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(OK)
-    public Cuenta detalle(@PathVariable(name = "id") Long id){
-        return cuentaService.findById(id);
+    public ResponseEntity<?> detalle(@PathVariable(name = "id") Long id){
+        Cuenta cuenta = null;
+        try {
+            cuenta = cuentaService.findById(id);
+
+        }catch (CuentaNoExisteException e){
+            return  ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(cuenta);
     }
 
     @PostMapping
@@ -50,5 +59,11 @@ public class CuentaController {
         response.put("transaccion", dto);
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void eliminar(@PathVariable Long id){
+        cuentaService.deleteById(id);
     }
 }
